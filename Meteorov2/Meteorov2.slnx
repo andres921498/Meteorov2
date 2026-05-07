@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="Meteorov2.Api/Meteorov2.Api.csproj" />
+  <Project Path="Meteorov2.Application/Meteorov2.Application.csproj" />
+  <Project Path="Meteorov2.Domain/Meteorov2.Domain.csproj" />
+  <Project Path="Meteorov2.Infrastructure/Meteorov2.Infrastructure.csproj" />
+</Solution>

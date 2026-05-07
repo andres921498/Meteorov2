@@ -1,6 +1,0 @@
-<Solution>
-  <Project Path="Meteoro.Application/Meteoro.Application.csproj" />
-  <Project Path="Meteoro.Domain/Meteoro.Domain.csproj" />
-  <Project Path="Meteoro.Infrastructure/Meteoro.Infrastructure.csproj" />
-  <Project Path="Meteoro.WebAPI/Meteoro.WebAPI.csproj" />
-</Solution>

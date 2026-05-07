@@ -1,0 +1,6 @@
+@Meteorov2.Api_HostAddress = http://localhost:5084
+
+GET {{Meteorov2.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,0 +1,73 @@
+services:
+  # 1. BASE DE DATOS (PostgreSQL)
+  # Almacenamiento centralizado de niveles de ríos y estado de sensores
+  db-meteorov2:
+    image: postgres:latest
+    container_name: postgres_meteorov2
+    environment:
+      POSTGRES_DB: db_meteorov2
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Lasin1234
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - meteoro-network
+    restart: always
+
+  # 2. SEGURIDAD (Keycloak)
+  # Gestión de acceso seguro para funcionarios de la Alcaldía de La Paz
+  auth-meteoro:
+    image: quay.io/keycloak/keycloak:latest
+    container_name: keycloak_meteoro
+    command: start-dev
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db-meteorov2
+    networks:
+      - meteoro-network
+    restart: always
+
+  # 3. BACKEND (ASP.NET Core API)
+  # Lógica de alertas preventivas y procesamiento de datos meteorológicos
+  api-meteoro:
+    build:
+      context: ./Meteorov2.Api
+      dockerfile: Dockerfile
+    container_name: api_meteoro_v2
+    ports:
+      - "5000:8080"
+    environment:
+      - ConnectionStrings__DefaultConnection=Host=db-meteorov2;Port=5432;Database=db_meteorov2;Username=postgres;Password=Lasin1234
+    depends_on:
+      - db-meteorov2
+    networks:
+      - meteoro-network
+    restart: always
+
+  # 4. FRONTEND (Angular)
+  # Dashboard interactivo de visualización de riesgos y gestión de estaciones
+  web-meteoro:
+    build:
+      context: ./meteoro-web
+      dockerfile: Dockerfile
+    container_name: web_meteoro_v2
+    ports:
+      - "4200:80"
+    depends_on:
+      - api-meteoro
+    networks:
+      - meteoro-network
+    restart: always
+
+networks:
+  meteoro-network:
+    driver: bridge
+
+volumes:
+  postgres_data:

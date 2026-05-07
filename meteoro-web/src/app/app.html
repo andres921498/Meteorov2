@@ -1,0 +1,303 @@
+<nav class="navbar navbar-expand-lg navbar-dark shadow-sm py-3">
+  <div class="container">
+    <span class="navbar-brand mb-0 h1 d-flex align-items-center">
+      <i class="bi bi-cloud-sun-fill me-2 fs-3"></i> 
+      <span class="fw-light">Sistema</span><b>Meteoro</b><small class="ms-1 opacity-75">v2</small>
+    </span>
+  </div>
+</nav>
+
+<div class="container mt-5">
+  <!-- Pestañas de Navegación Estilizadas -->
+  <div class="d-flex justify-content-center mb-5">
+    <ul class="nav nav-pills shadow-sm p-1 bg-white rounded-pill" id="pills-tab" role="tablist">
+      <li class="nav-item">
+        <button class="nav-link active rounded-pill px-4" data-bs-toggle="pill" data-bs-target="#tab-estaciones">
+          <i class="bi bi-building me-2"></i>Estaciones
+        </button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link rounded-pill px-4" data-bs-toggle="pill" data-bs-target="#tab-sensores">
+          <i class="bi bi-cpu me-2"></i>Sensores
+        </button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link rounded-pill px-4" data-bs-toggle="pill" data-bs-target="#tab-lecturas">
+          <i class="bi bi-graph-up-arrow me-2"></i>Lecturas
+        </button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link rounded-pill px-4" data-bs-toggle="pill" data-bs-target="#tab-alertas">
+          <i class="bi bi-exclamation-triangle me-2"></i>Alertas
+        </button>
+      </li>
+    </ul>
+  </div>
+
+  <div class="tab-content" id="pills-tabContent">
+
+    <!-- TAB ESTACIONES -->
+    <div class="tab-pane fade show active" id="tab-estaciones">
+      <div class="row g-4">
+        <div class="col-lg-4">
+          <div class="card border-0 shadow-sm overflow-hidden">
+            <div class="card-header-img" style="background-image: url('https://thumbs.dreamstime.com/b/cielo-estrellado-en-estaciones-meteorol%C3%B3gicas-las-monta%C3%B1as-carp%C3%A1ticas-261157309.jpg');"></div>
+            <div class="card-body p-4">
+              <h5 class="fw-bold text-dark mb-3">Nueva Estación</h5>
+              <div class="mb-3">
+                <input #enom type="text" class="form-control bg-light border-0 shadow-none" placeholder="Nombre de la estación">
+              </div>
+              <div class="mb-3">
+                <input #ebar type="text" class="form-control bg-light border-0 shadow-none" placeholder="Barrio / Ubicación">
+              </div>
+              <div class="row g-2 mb-3">
+                <div class="col"><input #elat type="number" class="form-control bg-light border-0 shadow-none" placeholder="Latitud"></div>
+                <div class="col"><input #elon type="number" class="form-control bg-light border-0 shadow-none" placeholder="Longitud"></div>
+              </div>
+              <div class="mb-4">
+                <select #eest class="form-select bg-light border-0 shadow-none">
+                  <option value="Operativo">Operativo</option>
+                  <option value="Mantenimiento">Mantenimiento</option>
+                </select>
+              </div>
+              <button class="btn btn-primary w-100 py-2 rounded-3 shadow-sm border-0" 
+                      (click)="guardarEstacion(enom.value, ebar.value, +elat.value, +elon.value, eest.value)">
+                <i class="bi bi-plus-lg me-1"></i> Registrar
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-8">
+          <div class="card border-0 shadow-sm">
+            <div class="table-responsive">
+              <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light">
+                  <tr>
+                    <th class="border-0 ps-4 py-3">ID</th>
+                    <th class="border-0 py-3">Nombre</th>
+                    <th class="border-0 py-3">Barrio</th>
+                    <th class="border-0 py-3">Estado</th>
+                    <th class="border-0 py-3 text-center">Acción</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (e of estaciones(); track e.id) {
+                  <tr>
+                    <td class="ps-4 text-muted small">#{{e.id}}</td>
+                    <td><span class="fw-bold">{{e.nombre}}</span></td>
+                    <td class="text-secondary">{{e.barrio}}</td>
+                    <td>
+                      <span class="badge rounded-pill" [ngClass]="e.estado === 'Operativo' ? 'bg-success-subtle text-success border border-success' : 'bg-warning-subtle text-warning border border-warning'">
+                        {{e.estado}}
+                      </span>
+                    </td>
+                    <td class="text-center">
+                      <button class="btn btn-sm btn-light text-danger rounded-circle p-2" (click)="eliminarEstacion(e.id)">
+                        <i class="bi bi-trash3"></i>
+                      </button>
+                    </td>
+                  </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB SENSORES -->
+    <div class="tab-pane fade" id="tab-sensores">
+      <div class="row g-4">
+        <div class="col-lg-4">
+          <div class="card border-0 shadow-sm overflow-hidden">
+            <div class="card-header-img" style="background-image: url('https://images.unsplash.com/photo-1518152006812-edab29b069ac?q=80&w=500'); height: 140px; background-size: cover; background-position: center;"></div>
+            <div class="card-body p-4">
+              <h5 class="fw-bold text-dark mb-3">Vincular Sensor</h5>
+              <div class="mb-3">
+                <select #sestId class="form-select bg-light border-0 shadow-none">
+                  <option value="">Seleccionar Estación...</option>
+                  @for (e of estaciones(); track e.id) { <option [value]="e.id">{{e.nombre}}</option> }
+                </select>
+              </div>
+              <div class="mb-3">
+                <input #stipo type="text" class="form-control bg-light border-0 shadow-none" placeholder="Tipo (ej. Humedad)">
+              </div>
+              <div class="mb-4">
+                <input #suni type="text" class="form-control bg-light border-0 shadow-none" placeholder="Unidad (ej. %)">
+              </div>
+              <button class="btn btn-info w-100 py-2 text-white rounded-3 shadow-sm border-0" (click)="guardarSensor(+sestId.value, stipo.value, suni.value)">
+                Vincular Hardware
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-8">
+          <div class="card border-0 shadow-sm">
+            <div class="table-responsive">
+              <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light">
+                  <tr>
+                    <th class="border-0 ps-4 py-3">ID</th>
+                    <th class="border-0 py-3">Tipo Sensor</th>
+                    <th class="border-0 py-3">Unidad</th>
+                    <th class="border-0 py-3">Estación ID</th>
+                    <th class="border-0 py-3 text-center">Acción</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (s of sensores(); track s.id) { 
+                  <tr>
+                    <td class="ps-4 text-muted small">#{{s.id}}</td>
+                    <td class="fw-bold">{{s.tipoSensor}}</td>
+                    <td><span class="badge bg-light text-dark border">{{s.unidadMedida}}</span></td>
+                    <td class="text-secondary">Estación #{{s.estacionId}}</td>
+                    <td class="text-center">
+                      <button class="btn btn-sm btn-light text-danger rounded-circle p-2" (click)="eliminarSensor(s.id)">
+                        <i class="bi bi-trash3"></i>
+                      </button>
+                    </td>
+                  </tr> 
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB LECTURAS -->
+    <div class="tab-pane fade" id="tab-lecturas">
+      <div class="row g-4">
+        <div class="col-lg-4">
+          <div class="card border-0 shadow-sm overflow-hidden">
+            <div class="card-header-img" style="background-image: url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=500'); height: 140px; background-size: cover; background-position: center;"></div>
+            <div class="card-body p-4">
+              <h5 class="fw-bold text-dark mb-3">Nueva Lectura</h5>
+              <div class="mb-3">
+                <select #lsensId class="form-select bg-light border-0 shadow-none">
+                  <option value="">Seleccionar Sensor...</option>
+                  @for (s of sensores(); track s.id) { <option [value]="s.id">ID:{{s.id}} - {{s.tipoSensor}}</option> }
+                </select>
+              </div>
+              <div class="mb-4">
+                <input #lval type="number" class="form-control bg-light border-0 shadow-none" placeholder="Valor Medido">
+              </div>
+              <button class="btn btn-warning w-100 py-2 text-white rounded-3 shadow-sm border-0" (click)="guardarLectura(+lsensId.value, +lval.value)">
+                Grabar Registro
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-8">
+          <div class="card border-0 shadow-sm">
+            <div class="table-responsive">
+              <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light">
+                  <tr>
+                    <th class="border-0 ps-4 py-3">Fecha y Hora</th>
+                    <th class="border-0 py-3">Valor</th>
+                    <th class="border-0 py-3">Sensor ID</th>
+                    <th class="border-0 py-3 text-center">Acción</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (l of lecturas(); track l.id) { 
+                  <tr>
+                    <td class="ps-4">
+                      <div class="d-flex flex-column">
+                        <span class="fw-bold">{{l.fechaHora | date:'mediumDate'}}</span>
+                        <span class="small text-muted">{{l.fechaHora | date:'shortTime'}}</span>
+                      </div>
+                    </td>
+                    <td><span class="fs-5 fw-bold text-primary">{{l.valor}}</span></td>
+                    <td class="text-secondary">#{{l.sensorId}}</td>
+                    <td class="text-center">
+                      <button class="btn btn-sm btn-light text-danger rounded-circle p-2" (click)="eliminarLectura(l.id)">
+                        <i class="bi bi-trash3"></i>
+                      </button>
+                    </td>
+                  </tr> 
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB ALERTAS -->
+    <div class="tab-pane fade" id="tab-alertas">
+      <div class="row g-4">
+        <div class="col-lg-4">
+          <div class="card border-0 shadow-sm overflow-hidden">
+            <div class="card-header-img" style="background-image: url('https://images.unsplash.com/photo-1454496522488-7a8e488e8606?q=80&w=500'); height: 140px; background-size: cover; background-position: center;"></div>
+            <div class="card-body p-4">
+              <h5 class="fw-bold text-dark mb-3">Emitir Alerta</h5>
+              <div class="mb-3">
+                <select #aestId class="form-select bg-light border-0 shadow-none">
+                  <option value="">Seleccionar Estación...</option>
+                  @for (e of estaciones(); track e.id) { <option [value]="e.id">{{e.nombre}}</option> }
+                </select>
+              </div>
+              <div class="mb-3">
+                <input #amsj type="text" class="form-control bg-light border-0 shadow-none" placeholder="Motivo de la alerta">
+              </div>
+              <div class="mb-4">
+                <select #ariesgo class="form-select bg-light border-0 shadow-none">
+                  <option value="Bajo">Riesgo Bajo</option>
+                  <option value="Medio">Riesgo Medio</option>
+                  <option value="Alto">Riesgo Alto</option>
+                  <option value="Crítico">Riesgo Crítico</option>
+                </select>
+              </div>
+              <button class="btn btn-danger w-100 py-2 rounded-3 shadow-sm border-0" (click)="guardarAlerta(+aestId.value, amsj.value, ariesgo.value)">
+                Emitir Alerta Inmediata
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-8">
+          <div class="card border-0 shadow-sm">
+            <div class="table-responsive">
+              <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light">
+                  <tr>
+                    <th class="border-0 ps-4 py-3">Fecha</th>
+                    <th class="border-0 py-3">Mensaje</th>
+                    <th class="border-0 py-3 text-center">Riesgo</th>
+                    <th class="border-0 py-3 text-center">Acción</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (a of alertas(); track a.id) {
+                  <tr>
+                    <td class="ps-4 small">{{ a.fechaEmision | date:'short' }}</td>
+                    <td class="fw-bold text-dark">{{ a.mensaje }}</td>
+                    <td class="text-center">
+                      <span class="badge px-3 py-2 rounded-pill" 
+                        [class.bg-warning-subtle]="a.nivelRiesgo === 'Medio'" [class.text-warning]="a.nivelRiesgo === 'Medio'"
+                        [class.bg-danger-subtle]="a.nivelRiesgo === 'Alto' || a.nivelRiesgo === 'Crítico'" [class.text-danger]="a.nivelRiesgo === 'Alto' || a.nivelRiesgo === 'Crítico'"
+                        [class.bg-info-subtle]="a.nivelRiesgo === 'Bajo'" [class.text-info]="a.nivelRiesgo === 'Bajo'">
+                        {{ a.nivelRiesgo }}
+                      </span>
+                    </td>
+                    <td class="text-center">
+                      <button class="btn btn-sm btn-light text-danger rounded-circle p-2" (click)="eliminarAlerta(a.id)">
+                        <i class="bi bi-trash3"></i>
+                      </button>
+                    </td>
+                  </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
